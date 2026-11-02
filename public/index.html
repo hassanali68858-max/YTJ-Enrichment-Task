@@ -48,7 +48,8 @@
       <input type="file" id="file" accept=".csv,text/csv">
       <select id="lang"><option value="en">English</option><option value="fi">Suomi</option><option value="sv">Svenska</option></select>
       <button id="run">Enrich</button>
-      <button id="download" class="secondary" disabled>Download customers JSON</button>
+      <button id="download" class="secondary" disabled>Customers JSON</button>
+      <button id="downloadCsv" class="secondary" disabled>NetSuite CSV</button>
     </div>
   </section>
 
@@ -79,7 +80,7 @@ $('run').addEventListener('click', async () => {
       method: 'POST', headers: { 'Content-Type': 'text/csv' }, body: $('csv').value,
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || res.statusText);
+    if (!res.ok) throw new Error((data.error || res.statusText) + (data.requestId ? ` (request ${data.requestId})` : ''));
     last = data; filter = 'all'; render();
   } catch (err) {
     $('out').hidden = false;
@@ -96,14 +97,24 @@ $('download').addEventListener('click', () => {
   a.click(); URL.revokeObjectURL(a.href);
 });
 
+$('downloadCsv').addEventListener('click', async () => {
+  const res = await fetch('/api/enrich?format=netsuite-csv&lang=' + $('lang').value, {
+    method: 'POST', headers: { 'Content-Type': 'text/csv' }, body: $('csv').value,
+  });
+  const blob = await res.blob();
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'customers-netsuite.csv' });
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
 function render() {
   $('out').hidden = false;
   $('download').disabled = !last.customers.length;
+  $('downloadCsv').disabled = !last.customers.length;
   const s = last.summary;
-  const keys = ['all', ...Object.keys(s).filter((k) => k !== 'total' && k !== 'duplicates')];
+  const keys = ['all', ...Object.keys(s).filter((k) => !['total', 'duplicates', 'needsReview'].includes(k))];
   $('summary').innerHTML = keys.map((k) =>
     `<span class="chip ${k === filter ? 'active' : ''}" data-k="${k}">${k === 'all' ? 'All' : k.replace('_', ' ')} · ${k === 'all' ? s.total : s[k]}</span>`
-  ).join('') + (s.duplicates ? `<span class="muted" style="align-self:center">${s.duplicates} duplicate(s)</span>` : '');
+  ).join('') + `<span class="muted" style="align-self:center">${s.duplicates} duplicate(s) · ${s.needsReview} need review</span>`;
   $('summary').querySelectorAll('.chip').forEach((c) => c.onclick = () => { filter = c.dataset.k; render(); });
 
   $('rows').innerHTML = last.results.filter((r) => filter === 'all' || r.status === filter).map((r) => {

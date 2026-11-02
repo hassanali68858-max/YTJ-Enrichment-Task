@@ -1,126 +1,176 @@
-# YTJ business ID enrichment service
+# YTJ business ID enrichment
 
-A small Node.js service that takes a CSV of corporate customers (business IDs and/or company names), looks them up in PRH's open YTJ API, returns a normalised JSON result, and maps each company to an import-ready **customer record** (shaped like a NetSuite Customer).
+My solution to the Advectus pre-assignment. It's a small Node service: you give it a CSV of company customers with business IDs and/or names, it looks them up in PRH's open YTJ API, returns clean JSON, and maps each company to a customer record for a register like NetSuite. You can download the records as JSON, or as a CSV that NetSuite's CSV Import Assistant can load directly.
 
-```
-CSV ──► parse & validate ──► YTJ lookup ──► normalise ──► match / dedupe ──► customer record
-          (csv.js,            (ytjClient.js)  (normalize.js)  (match.js,        (customerMapper.js)
-           businessId.js)                                      enrich.js)
-```
+## Quick start
 
-## Running it
-
-Requires Node 18+. There are **no npm dependencies**, so `npm install` is not needed.
+You need Node 20+. The service has **no runtime dependencies**. `npm install` only pulls TypeScript for the type check.
 
 ```bash
-npm start                      # http://localhost:3000 - UI + API against the live YTJ API
-npm run start:mock             # same, against offline fixtures (no network needed)
-npm test                       # unit tests (offline)
+npm start                 # http://localhost:3000, uses the live YTJ API
+npm run start:mock        # same, with local fixtures (no network needed)
+npm test                  # 37 tests, all offline
+npm run check             # typecheck + tests (what CI runs)
 
-# CLI: full result to stdout, a readable summary to stderr
 node src/cli.js data/sample-customers.csv > result.json
-node src/cli.js data/sample-customers.csv --customers-only --lang=fi > customers.json
+node src/cli.js data/sample-customers.csv --format=netsuite-csv > customers.csv
 ```
 
-API:
+The CLI exits with code 2 if any row needs attention, so it's usable in a script. Configuration is done with environment variables, see `.env.example`. There's also a `Dockerfile` with a health check.
 
-| Method | Path | Notes |
+### API
+
+| | | |
 |---|---|---|
-| `POST` | `/api/enrich?lang=en\|fi\|sv` | Body: raw CSV (`text/csv`) or `{"csv": "..."}` |
-| `GET` | `/api/companies/:businessId` | Single normalised lookup, handy for debugging |
-| `GET` | `/` | Minimal UI: paste or upload a CSV, see results and errors, download customers JSON |
+| `POST /api/enrich` | body: CSV, or JSON `{ "csv": "..." }` | `?lang=en\|fi\|sv`, `?format=json\|netsuite-csv` |
+| `GET /api/companies/:businessId` | single normalised company | handy for debugging |
+| `GET /healthz` | liveness + upstream stats (requests, retries, cache hits) | |
+| `GET /` | small UI: paste or upload, filter by status, download | |
 
-```bash
-curl -X POST --data-binary @data/sample-customers.csv -H 'Content-Type: text/csv' localhost:3000/api/enrich
+The JSON response has three parts:
+
+- `summary`: counts per status, duplicates, and how many rows need review.
+- `results`: one entry per CSV line, with the status, match method, confidence, company, customer record, warnings and candidates.
+- `customers`: the import-ready records.
+
+Every response has an `X-Request-Id`, and the same ID appears in the JSON logs.
+
+## How I approached it
+
+Calling the API is the easy part. The real problem is data quality. Customer CSVs are messy: the dash is missing, Excel has dropped the leading zero, someone typed "Kone" instead of "KONE Oyj", the company was renamed, or the same customer appears twice in different forms.
+
+The output goes into a customer register, so my guiding rule was that **a wrong match is worse than no match**. Linking a customer to the wrong legal entity means invoices go to the wrong company. An unmatched row costs someone a minute. Concretely:
+
+1. **A valid business ID is authoritative and the name is only a hint.** If the CSV name doesn't match any of the company's current names (primary, parallel or auxiliary), I keep the register's data, add a `name_mismatch` warning and lower the confidence.
+2. **A name search is only accepted automatically if it's unambiguous.** Otherwise the row is `ambiguous`, with up to 5 candidates for a person to choose from.
+3. **Every row gets a result, and failures are data.** A bad ID or a network error on one row never fails the file. Each row has a `status`, a `confidence` (high/medium/low) and `warnings`, so the output can feed a review queue directly.
+
+## Architecture
+
+```
+src/
+  main.js              composition root: config, logger, registry, server, graceful shutdown
+  config.js            all env-based config in one place, validated at startup
+  enrich.js            application service: rows -> results (orchestration, dedupe, summary)
+  domain/              pure functions, no I/O
+    businessId.js        Y-tunnus normalisation + check digit
+    normalize.js         raw YTJ record -> flat "current state" Company
+    match.js             choosing a company from a name search
+    customerMapper.js    Company -> NetSuite-style customer record
+  ytj/                 everything that knows about PRH
+    client.js            HTTP client: pacing, retries with jitter, cache, error causes
+    codes.js             PRH code lists (company forms, registers, name types...)
+    mockClient.js        fixture-backed registry with the same interface
+  export/netsuiteCsv.js  customer records -> CSV for NetSuite's Import Assistant
+  http/server.js       routing, body limits, status codes; no business logic
+  lib/                 csv parse/serialise, JSON logger
 ```
 
-Response shape:
+The domain code is pure, which keeps it easy to test. The PRH-specific parts are isolated in `ytj/` and `normalize.js`, so switching to a different register (for example a Swedish one) would mean a new client and normaliser, while matching, mapping and export stay the same. The registry is passed in as a dependency (`CompanyRegistry`), which is how the mock and the tests plug in without any patching.
 
-```jsonc
-{
-  "summary":   { "total": 30, "ok": 18, "not_found": 4, "ambiguous": 2, "invalid_input": 2, "duplicates": 3 },
-  "results":   [ /* one per input line: status, matchMethod, confidence, company, customer, warnings, candidates */ ],
-  "customers": [ /* import-ready records: resolved and de-duplicated */ ]
-}
-```
+## Things I learned from the live API
 
-## How I thought about the problem
+I didn't want to trust only the docs, so I checked real responses. A few things changed the code:
 
-The real problem is a data-quality problem rather than an API problem. Calling YTJ is easy. The difficulty is that the input is messy: IDs come without dashes or lose their leading zero in Excel, names are short forms or old names, and rows are duplicated. The output goes into a customer register, where a **wrong match is worse than no match**: invoicing the wrong legal entity is expensive, while an unmatched row only costs someone a minute.
-
-That led to three principles:
-
-1. **The business ID is authoritative and the name is only a hint.** If a valid ID is present, I look it up directly. If the CSV name disagrees with the register, I keep the register's name and raise a `name_mismatch` warning instead of guessing.
-2. **Only auto-accept unambiguous matches.** A name search that hits more than one plausible company returns `ambiguous` with candidates, so a person can choose one.
-3. **Every row gets a result, and failures are data.** One bad row or one API timeout never fails the whole file. Each row has a `status` (`ok`, `not_found`, `ambiguous`, `invalid_input`, `error`), a `confidence`, and `warnings`, which makes the output usable for a review queue.
+- **VAT registration** is `registeredEntries` with `register: "6"` ("Value added tax-liability" in the `REK` code list). The descriptions are things like "VAT-liable for business activity", so matching on text would have been fragile.
+- **Company forms** have official abbreviations in the `YRMU` code list (16 = OY, 17 = OYJ, 14 = OK, ...). I embedded that list in `codes.js` instead of inventing my own.
+- **Name types**: 1 = company name, 2 = parallel name (e.g. "Valio Ltd"), 3 = auxiliary name (trade names like "Valio Aimo"). The matcher treats them differently: official names first, auxiliary names only as a last tier.
+- **Name search is broad.** "Kesko" returns 17 companies, mostly through auxiliary names. "Nokia" returns about 1,000. That's why matching uses tiers and stops at the first ambiguous tier instead of picking something.
+- **Streets and cities are often upper case** ("MEIJERITIE"), so they get title-cased for the register.
+- **Companies get renamed.** In the sample CSV, "Stockmann Oyj Abp" with ID 0114162-2 comes back as **Lindex Group Oyj**. That's the reason the ID wins over the name.
+- **The API refuses connections at times.** From my network it refused connections completely for a while (`ECONNREFUSED`), and my first live run had several rows fail with errors. The client now paces requests (150 ms minimum gap, 2 in parallel), retries refused connections and 5xx with exponential backoff and jitter, and reports the real cause (`ECONNREFUSED`, `ETIMEDOUT`) instead of a generic "fetch failed".
 
 ## Assumptions
 
-| Assumption | Why |
-|---|---|
-| The CSV has a header row with a business-ID column and/or a name column. Common aliases are accepted (`y-tunnus`, `business_id`, `nimi`, `company_name`, ...), and the delimiter `,` or `;` is auto-detected. | Exports from Finnish Excel use `;`. The header names in real files vary. |
-| Lists are small (tens to a few thousand rows) and imports run occasionally, not in real time. | That is how CSV imports of corporate customers usually work. It justifies a synchronous request, an in-memory cache and a concurrency of 3 instead of a job queue. I capped uploads at 2,000 rows. |
-| The customer register wants the **current** state only, not history. | PRH keeps full history (old names, ended forms and addresses). I keep only entries without an `endDate`. |
-| A company is "active" if it has no `endDate` and no open company situation (liquidation, bankruptcy, restructuring). | PRH has no single "is active" flag, so status has to be derived. |
-| The PRH postal address is the **billing** address and the street address is the **visiting/shipping** address. | That matches what the two address types mean. When both are identical, I create only one address-book entry. |
-| A VAT number is set only if PRH lists a current VAT-register entry. | `FI` + the ID digits always gives a correctly formatted VAT number, but the company might not actually be VAT-registered. A wrong VAT number on an invoice is a real problem. |
-| Ceased or bankrupt companies are still returned and mapped, but with `isInactive: true` and a warning. | The dealership may have historical customers, and silently dropping rows hides information. The import step can decide. |
-| Descriptions default to English (`?lang=fi\|sv` is available). | The reviewers read English. A Finnish dealership would probably set `fi`. |
-| Names in the sample CSV are fictitious customer rows. The business IDs of well-known companies are real, so live mode returns real data. | The task asks for a fictitious example file, but the lookup needs real IDs to be meaningful. |
+- **The CSV has a header row.** I accept common column names (`y-tunnus`, `business_id`, `nimi`, `company_name`...) and auto-detect `,` or `;`. Finnish Excel defaults to `;`.
+- **Files are tens to a few thousand rows**, imported occasionally. One synchronous request is fine for that, with a cap of 2,000 rows (configurable). Bigger files should be a background job (see next steps).
+- **The register wants current data only.** I ignore anything with an `endDate`.
+- **Status is derived**, because PRH has no "active" flag: ended → `ceased`; an open company situation → `liquidation` / `bankruptcy` / `restructuring`; otherwise `active`.
+- **Postal address = billing, street address = shipping.** If they're the same, there's one address entry.
+- **VAT number only if PRH says the company is VAT liable.** `FI` + the digits is always a well-formed number, but a wrong VAT number on an invoice is a real problem.
+- **Inactive companies are still returned**, flagged with `isInactive: true` and a warning. Dealerships have old customers, and silently dropping rows hides information.
+- **English descriptions by default** for reviewability. A Finnish team would use `?lang=fi`.
+- **The sample CSV is fictitious**, but most business IDs are real so live mode returns real data. A few rows are deliberately broken to exercise each path.
 
-## Decisions and why
+## Decisions and trade-offs
 
-- **Zero dependencies (`node:http`, built-in `fetch`, `node:test`).** The service is small. Express, a CSV library and Jest would add about 100 transitive packages for very little benefit. I wrote the CSV parser myself because it is about 40 lines. In production I would probably switch to `csv-parse` to get better handling of edge cases.
-- **Business ID validation before calling the API.** The Y-tunnus check digit (weights 7-9-10-5-8-4-2, mod 11) catches typos without any network call. The normaliser also repairs common variants: `0112038 9`, `01120389`, `112038-9` (leading zero lost in Excel) and `FI01120389`. Each repair is reported as a warning.
-- **Invalid ID with a name present → fall back to name search** (with a warning). Without a name, the row is `invalid_input`.
-- **Defensive ID check.** The client only accepts a returned company whose `businessId.value` equals the requested ID. It never assumes the filter worked.
-- **Name matching.** Names are lowercased, punctuation is removed, and legal suffixes (`oy`, `oyj`, `ab`, `abp`, `ky` ...) are stripped. An exact full-name match gets `medium` confidence. A unique match on the core name (without the suffix) gets `low`. When both an active and a ceased company match, the active one wins. Anything else is `ambiguous` and the top 5 candidates are returned.
-- **Duplicates are detected after resolution.** `Nokia`, `0112038-9` and `FI01120389` are the same customer even though the input strings differ. Duplicates stay in `results` with a `duplicate_of_line:N` warning but are left out of `customers`.
-- **Being polite to a free public API.** The client uses 3 concurrent requests, a 10 s timeout, 2 retries with exponential backoff (only on 429, 5xx and network errors), and a 15-minute in-memory cache. Failures are never cached.
-- **Mock mode and fixtures.** These make the tests deterministic and the service demoable offline. The fixtures follow the real v3 response shape (field names checked against live responses) but contain hand-written values.
+**No runtime dependencies.** Node 20 has `fetch`, `node:test` and a perfectly usable `http` module. For a service this size, Express, a CSV library and Jest would add about a hundred packages to audit for very little gain. The trade-off: I own a 40-line CSV parser. In production I'd switch to `csv-parse` as soon as we saw unusual files. TypeScript is a dev dependency only: the code is plain JS with JSDoc types, checked by `tsc --noEmit` in CI, so there's no build step.
+
+**Validate before calling the API.** The Y-tunnus check digit (weights 7-9-10-5-8-4-2, mod 11; remainder 1 is never issued) catches typos with no network call. Known spreadsheet damage gets repaired, with a warning: `0112038 9`, `01120389`, `112038-9`, `FI01120389`. If the ID is invalid but there's a name, I fall back to a name search.
+
+**Never trust the filter.** After an ID lookup, the client only accepts a company whose `businessId.value` equals the requested ID.
+
+**Matching in tiers, with explicit confidence.** Exact official name (`medium`) → core name without the legal suffix (`low`) → auxiliary name (`low`). An ID match is `high`. Active companies are preferred over ended ones. A tier with several hits stops the search as `ambiguous`, because falling through to a weaker tier would just pick something arbitrary.
+
+**Dedupe after resolving, not before.** "Nokia", "0112038-9" and "FI01120389" are the same customer. Duplicates stay visible in `results` with `duplicate_of_line:N`, but appear only once in `customers`.
+
+**Being a good citizen towards a free API.** Pacing plus a concurrency limit, a 10 s timeout, retries only for 429, 5xx and network errors, and a 15-minute cache with in-flight de-duplication. Failures are never cached. All of this is configurable, and `/healthz` shows request, retry and cache-hit counts.
+
+**Concurrency vs. pacing.** I kept both. Concurrency limits how much we wait on slow responses. Pacing limits how hard we hit PRH. For 30 rows this takes a few seconds, which is fine for an import.
+
+**Embedded code lists instead of fetching them.** PRH has a `/description` endpoint. These lists change maybe once a decade, so embedding them keeps the output deterministic and startup free of network calls. Unknown codes fall back to the text that comes with the response.
+
+**Mock registry + fixtures.** The tests are deterministic and offline, and the demo works without network. The fixtures follow the real v3 shape (checked against live responses), but the values are written by hand and not copied from the register.
+
+**CSV export is safe to open in Excel.** Company names come from an external source, so cells starting with `=`, `+`, `-` or `@` are prefixed with `'` to prevent formula injection.
 
 ## Mapping to a customer record
 
-I used NetSuite's Customer record as the target shape because NetSuite was the example in the task. Field names follow its REST record API, so moving to a real integration would mostly mean adding authentication and a `PUT`/upsert.
+I used NetSuite's Customer record because NetSuite was the example in the brief, so the field names are real. In practice there are two ways in:
 
-| Customer field | Source | Reasoning |
+- **CSV Import Assistant**, which needs no code: `?format=netsuite-csv` gives one row per customer. Map the columns once, save the import map, and use "Add or Update" on External ID.
+- **REST API**: the JSON `customers` array is already in the record API's shape, so an adapter only needs auth and an upsert.
+
+| Field | From | Why |
 |---|---|---|
-| `externalId` = `FI-<businessId>` | business ID | A stable, natural key. Re-importing the same list **updates** records instead of creating duplicates (upsert by external ID). The `FI-` prefix leaves room for foreign companies later. |
-| `isPerson: false` | constant | These are corporate customers. |
-| `companyName` | current primary name (`names[type=1]`, no `endDate`) | The legal name as registered, not the abbreviation from the CSV. |
-| `vatRegNumber` | `FI` + ID digits, **only if VAT-registered** | Needed on B2B invoices. See the assumptions above. |
-| `isInactive` | derived status ≠ `active` | Keeps ceased or bankrupt companies from being sold to on credit by mistake. |
-| `url` | `website.url`, normalised to `https://` | |
-| `addressBook[]` | postal address → default billing, street address → default shipping | Merged into one entry when identical. `addressee` is the company name. `attention` is the c/o field. |
-| `custentity_business_id` | business ID | Kept as a separate searchable field, because sales and finance search by Y-tunnus. |
-| `custentity_company_form` | company form → `OY`, `OYJ`, `KY`, `AY`, `OSK`, `TMI`, ... | Short codes fit a list column. Unknown forms fall back to PRH's description. |
-| `custentity_industry_code` / `_name` | main business line (TOL 2008) | Useful for segmentation (for example leasing or fleet customers). |
-| `custentity_register_status` | derived status | More detail than the `isInactive` boolean (bankruptcy versus ceased). |
-| `custentity_enrichment` | source, PRH `lastModified`, timestamp, match method, confidence, warnings | Provenance. Users can see where the data came from and how much to trust it, and a later re-sync can skip unchanged companies. |
+| `externalId` = `FI-<businessId>` | business ID | Natural key → idempotent upserts. Re-running an import updates records instead of duplicating them. The prefix leaves room for foreign companies. |
+| `isPerson: false` | – | Corporate customers. |
+| `companyName` | current primary name | The registered name, not what was typed in the CSV. |
+| `vatRegNumber` | `FI` + digits, only if VAT liable | Needed on B2B invoices. |
+| `isInactive` | status ≠ active | Stops anyone selling on credit to a bankrupt company by accident. |
+| `url` | website, `https://` added | |
+| `addressBook` | postal → billing, street → shipping | One entry if they're the same. |
+| `custentity_business_id` | business ID | Separate searchable field. Finance searches by Y-tunnus. |
+| `custentity_company_form` | YRMU abbreviation (OY, OYJ, KY, OK…) | Short, official, fits a list column. |
+| `custentity_industry_code` / `_name` | main business line (TOL 2008) | Segmentation, e.g. finding fleet or leasing customers. |
+| `custentity_register_status` | derived status | More precise than a boolean: ceased ≠ bankrupt. |
+| `custentity_enrichment` | source, PRH `lastModified`, fetch time, method, confidence, warnings | Provenance: anyone looking at the record can see where the data came from and how much to trust it. A re-sync can also skip companies that haven't changed. |
 
-Fields that are deliberately **not** mapped: subsidiary, sales rep, terms, price level and currency. These are business decisions inside the register, not facts from PRH, so they belong to the import configuration.
+**Deliberately not mapped:** subsidiary, sales rep, payment terms, price level and currency. PRH doesn't know them. They're business decisions, so they belong in the import configuration.
 
-## What I left out and what I would do next
+## Production readiness: what's there and what isn't
 
-Left out because of the time box:
+What's there:
 
-- **Paging name searches.** I only read the first page of results. If a name has more hits than that, the row gets a `name_search_truncated` warning. Next step: refine the search (for example by adding a postcode column when available) instead of paging through everything.
-- **Persistence and async jobs.** Big files should be handled as a background job (upload → job ID → poll), with a persistent cache (Redis or SQLite) instead of the in-memory one.
-- **Pushing to the actual register.** The next step would be a NetSuite adapter that upserts by `externalId` and a review screen where a person resolves `ambiguous` rows by clicking a candidate.
-- **Code lists.** I use the descriptions embedded in the response. PRH also has a code-list endpoint that would give clean, versioned labels for company forms, situations and industries.
-- **Smarter status rules.** The companySituation codes (`KONK`, `SELTILA`, `SANE`) are mapped from documentation. They need confirming against more real cases.
-- **Production hardening.** Structured logging, rate limiting on our own endpoint, input fuzzing, CSV export of the results, a Dockerfile, and TypeScript or JSDoc types for the response shapes.
-- **React UI.** The UI is one static HTML file with vanilla JS. For a reviewer it does the job (paste or upload, filter by status, view each mapped record, download). In a real product with more screens I would use React.
+- structured JSON logs with request IDs
+- `/healthz`
+- graceful shutdown
+- config validated at startup
+- body and row limits
+- upstream timeouts, retries and pacing
+- typecheck and tests in CI on Node 20 and 22
+- a Dockerfile that runs as a non-root user
 
-## How I used AI tools
+What's missing, roughly in the order I'd add it:
 
-<!-- TODO (Awais): rewrite this section in your own words so it matches exactly what you did. -->
+1. **Async jobs for large files.** Upload → job ID → poll or webhook. Store the results, and use a shared cache (Redis or Postgres) so several instances don't each hit PRH.
+2. **Review workflow.** A screen where someone resolves `ambiguous` and `low`-confidence rows by clicking a candidate. Their choice is stored and reused next time.
+3. **The actual NetSuite adapter.** Token-based auth, upsert by `externalId`, a dry-run mode, and per-record error reporting back into the results.
+4. **Periodic re-sync.** Re-check existing customers and use PRH's `lastModified` to catch renames, address changes and bankruptcies. For a dealership, finding out a customer went bankrupt matters more than the initial import.
+5. **Name search paging and narrowing.** I only read the first page and flag `name_search_truncated`. Rather than paging through 1,000 "Nokia" hits, I'd narrow the search with a postcode or city column when the CSV has one.
+6. **Operations.** Metrics (Prometheus: rows by status, upstream latency and retries), rate limiting and auth on our own endpoint, and contract tests that run nightly against the live API to catch format changes.
+7. **Confirm the situation codes.** `SELTILA` (liquidation) is verified from the code list. `KONK` and `SANE` come from the documentation and should be confirmed against real cases.
+8. **A React front end** if the UI grows into the review workflow. For now it's one HTML file, which is enough to see results and errors.
 
-I used **Claude (Anthropic)** as a pair programmer throughout:
+## How I used AI
 
-- **Understanding the API.** Exploring the shape of the YTJ v3 response: language codes, address types, history entries with `endDate`.
-- **Scaffolding and code.** Claude wrote most of the first version of the modules, tests, fixtures and UI based on the design discussed above. I reviewed the code, ran it against the live API, and adjusted it.
-- **Design discussion.** Working through edge cases such as when to trust a name match, how to treat ceased companies and VAT numbers, and how to de-duplicate after resolution.
-- **README drafting.** Claude wrote the first draft and I edited it.
+<!-- Awais: edit this so it matches exactly what you did, then delete this line. -->
 
-The decisions above are ones I can explain and defend. AI made it faster to get to a working, tested baseline, so more of the time went into the judgment calls, which this assignment is about.
+I used Claude (Anthropic) extensively:
+
+- to work out the YTJ v3 response format and to query the live API and its code lists (that's where the VAT register, name type and company form findings come from)
+- to write most of the code, tests, fixtures and UI. I then ran it against the live API and compared the results with the YTJ website. When the first live run showed refused connections, that led to the pacing and retry changes.
+- as a sparring partner on the design: when a name match is safe, how to treat inactive companies and VAT numbers, where duplicates should be detected, and how to structure the code so the PRH-specific parts are isolated
+- to draft this README, which I then edited
+
+I agree with the decisions here and can explain each of them. AI let me get to a tested, working baseline quickly, so more of my time went into the judgment calls, which is what this assignment is really about.

@@ -18,6 +18,27 @@
           "registrationDate": "2010-01-01",
           "version": 1,
           "source": "1"
+        },
+        {
+          "name": "Nokia Corporation",
+          "type": "2",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Nokia Abp",
+          "type": "2",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Nokia Networks",
+          "type": "3",
+          "registrationDate": "2015-01-01",
+          "version": 1,
+          "source": "1"
         }
       ],
       "mainBusinessLine": {
@@ -90,19 +111,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -113,7 +134,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Karakaari",
+          "street": "KARAKAARI",
           "buildingNumber": "7",
           "entrance": "",
           "apartmentNumber": "",
@@ -255,19 +276,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -278,7 +299,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Kartanontie",
+          "street": "KARTANONTIE",
           "buildingNumber": "1",
           "entrance": "",
           "apartmentNumber": "",
@@ -302,7 +323,7 @@
         },
         {
           "type": 2,
-          "street": "Kartanontie",
+          "street": "KARTANONTIE",
           "buildingNumber": "1",
           "entrance": "",
           "apartmentNumber": "",
@@ -345,6 +366,34 @@
           "name": "Valio Oy",
           "type": "1",
           "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Valio Ltd",
+          "type": "2",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Valio Ab",
+          "type": "2",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Valio Aimo",
+          "type": "3",
+          "registrationDate": "2015-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Valiojäätelö",
+          "type": "3",
+          "registrationDate": "2015-01-01",
           "version": 1,
           "source": "1"
         }
@@ -419,19 +468,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -442,7 +491,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Meijeritie",
+          "street": "MEIJERITIE",
           "buildingNumber": "6",
           "entrance": "",
           "apartmentNumber": "",
@@ -592,19 +641,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -615,7 +664,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Valimotie",
+          "street": "VALIMOTIE",
           "buildingNumber": "17-19",
           "entrance": "",
           "apartmentNumber": "",
@@ -639,7 +688,7 @@
         },
         {
           "type": 2,
-          "street": "Valimotie",
+          "street": "VALIMOTIE",
           "buildingNumber": "17-19",
           "entrance": "",
           "apartmentNumber": "",
@@ -845,19 +894,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -868,7 +917,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Hämeenkatu",
+          "street": "HÄMEENKATU",
           "buildingNumber": "10",
           "entrance": "",
           "apartmentNumber": "",
@@ -980,19 +1029,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -1003,7 +1052,7 @@
       "addresses": [
         {
           "type": 1,
-          "street": "Kauppakatu",
+          "street": "KAUPPAKATU",
           "buildingNumber": "3",
           "entrance": "",
           "apartmentNumber": "",
@@ -1135,19 +1184,19 @@
           "authority": "2"
         },
         {
-          "type": "1",
+          "type": "80",
           "descriptions": [
             {
               "languageCode": "1",
-              "description": "Arvonlisäverorekisterissä"
+              "description": "Arvonlisäverovelvollinen liiketoiminnasta"
             },
             {
               "languageCode": "2",
-              "description": "I mervärdesskatteregistret"
+              "description": "Momsskyldig för affärsverksamhet"
             },
             {
               "languageCode": "3",
-              "description": "Registered in VAT register"
+              "description": "VAT-liable for business activity"
             }
           ],
           "registrationDate": "1994-06-01",
@@ -1158,7 +1207,7 @@
       "addresses": [
         {
           "type": 2,
-          "street": "Teollisuustie",
+          "street": "TEOLLISUUSTIE",
           "buildingNumber": "22",
           "entrance": "",
           "apartmentNumber": "",

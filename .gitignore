@@ -1,5 +1,6 @@
 node_modules/
 *.log
 result.json
-customers.json
+customers*.json
+customers*.csv
 .DS_Store

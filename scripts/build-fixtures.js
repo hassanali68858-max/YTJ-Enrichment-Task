@@ -14,22 +14,26 @@ const desc = (fi, sv, en) => [
 const OY = { type: '16', descriptions: desc('Osakeyhtiö', 'Aktiebolag', 'Limited company'), registrationDate: '2000-01-01', version: 1, source: '1' };
 const OYJ = { type: '17', descriptions: desc('Julkinen osakeyhtiö', 'Publikt aktiebolag', 'Public limited company'), registrationDate: '2000-01-01', version: 1, source: '1' };
 const KY = { type: '13', descriptions: desc('Kommandiittiyhtiö', 'Kommanditbolag', 'Limited partnership'), registrationDate: '2010-01-01', version: 1, source: '1' };
-const VAT = { type: '1', descriptions: desc('Arvonlisäverorekisterissä', 'I mervärdesskatteregistret', 'Registered in VAT register'), registrationDate: '1994-06-01', register: '6', authority: '1' };
+// Shapes below mirror real v3 responses (checked against live data on 2026-11-02):
+// VAT liability is register "6", names have type 1 (primary) / 2 (parallel) / 3 (auxiliary),
+// and street and city names are often upper case.
+const VAT = { type: '80', descriptions: desc('Arvonlisäverovelvollinen liiketoiminnasta', 'Momsskyldig för affärsverksamhet', 'VAT-liable for business activity'), registrationDate: '1994-06-01', register: '6', authority: '1' };
 const TRADE = { type: '1', descriptions: desc('Rekisterissä', 'Registrerad', 'Registered'), registrationDate: '1980-01-01', register: '1', authority: '2' };
 
 const addr = (type, street, no, postCode, fi, sv = fi, extra = {}) => ({
-  type, street, buildingNumber: no, entrance: '', apartmentNumber: '', apartmentIdSuffix: '', co: '',
+  type, street: street.toUpperCase(), buildingNumber: no, entrance: '', apartmentNumber: '', apartmentIdSuffix: '', co: '',
   postCode, postOffices: [{ city: fi.toUpperCase(), languageCode: '1', municipalityCode: '091' }, { city: sv.toUpperCase(), languageCode: '2', municipalityCode: '091' }],
   registrationDate: '2020-01-01', source: '0', ...extra,
 });
 
-function company({ id, name, form = OY, tol, tolEn, tolFi, addresses = [], website, vat = true, endDate, situations = [], otherNames = [], formerNames = [] }) {
+function company({ id, name, form = OY, tol, tolEn, tolFi, addresses = [], website, vat = true, endDate, situations = [], otherNames = [], parallelNames = [], formerNames = [] }) {
   return {
     businessId: { value: id, registrationDate: '1990-01-01', source: '3' },
     euId: { value: `FIFPRO.${id}`, source: '1' },
     names: [
       { name, type: '1', registrationDate: '2010-01-01', version: 1, source: '1', ...(endDate ? { endDate } : {}) },
       ...formerNames.map((n) => ({ name: n, type: '1', registrationDate: '1990-01-01', endDate: '2009-12-31', version: 2, source: '1' })),
+      ...parallelNames.map((n) => ({ name: n, type: '2', registrationDate: '2010-01-01', version: 1, source: '1' })),
       ...otherNames.map((n) => ({ name: n, type: '3', registrationDate: '2015-01-01', version: 1, source: '1' })),
     ],
     mainBusinessLine: tol ? { type: tol, descriptions: desc(tolFi, tolFi, tolEn), typeCodeSet: 'TOIMI4', registrationDate: '2008-01-01', source: '2' } : undefined,
@@ -47,11 +51,11 @@ function company({ id, name, form = OY, tol, tolEn, tolFi, addresses = [], websi
 }
 
 const companies = [
-  company({ id: '0112038-9', name: 'Nokia Oyj', form: OYJ, tol: '70100', tolEn: 'Activities of head offices', tolFi: 'Pääkonttorien toiminta',
+  company({ id: '0112038-9', name: 'Nokia Oyj', form: OYJ, parallelNames: ['Nokia Corporation', 'Nokia Abp'], otherNames: ['Nokia Networks'], tol: '70100', tolEn: 'Activities of head offices', tolFi: 'Pääkonttorien toiminta',
     website: 'www.nokia.com', addresses: [addr(1, 'Karakaari', '7', '02610', 'Espoo', 'Esbo'), addr(2, 'PL', '226', '00045', 'Nokia Group', 'Nokia Group', { street: '', buildingNumber: '', postOfficeBox: '226' })] }),
   company({ id: '1927400-1', name: 'KONE Oyj', form: OYJ, tol: '28220', tolEn: 'Manufacture of lifting and handling equipment', tolFi: 'Nosto- ja siirtolaitteiden valmistus',
     website: 'www.kone.com', addresses: [addr(1, 'Kartanontie', '1', '00330', 'Helsinki', 'Helsingfors'), addr(2, 'Kartanontie', '1', '00330', 'Helsinki', 'Helsingfors')] }),
-  company({ id: '0116297-6', name: 'Valio Oy', tol: '10510', tolEn: 'Operation of dairies and cheese making', tolFi: 'Maitotaloustuotteiden valmistus',
+  company({ id: '0116297-6', name: 'Valio Oy', parallelNames: ['Valio Ltd', 'Valio Ab'], otherNames: ['Valio Aimo', 'Valiojäätelö'], tol: '10510', tolEn: 'Operation of dairies and cheese making', tolFi: 'Maitotaloustuotteiden valmistus',
     website: 'valio.fi', addresses: [addr(1, 'Meijeritie', '6', '00370', 'Helsinki', 'Helsingfors'), addr(2, 'PL', '10', '00039', 'Valio', 'Valio', { street: '', buildingNumber: '', postOfficeBox: '10' })] }),
   company({ id: '0100130-4', name: 'Dynava Oy', tol: '82200', tolEn: 'Activities of call centres', tolFi: 'Puhelinpalvelukeskusten toiminta',
     website: 'www.dynava.fi', formerNames: ['Oy Eniro Finland Ab'],

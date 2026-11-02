@@ -42,6 +42,21 @@ function resolveColumn(headers, key) {
 }
 
 /**
+ * Serialise rows to CSV (RFC 4180, CRLF, quoting only when needed).
+ * Cells starting with = + - @ are prefixed with ' to prevent formula injection when the
+ * file is opened in Excel - company names come from an external source.
+ * @param {Array<Array<string|number|boolean|null|undefined>>} rows
+ */
+export function toCsv(rows) {
+  const cell = (v) => {
+    let s = v === null || v === undefined ? '' : String(v);
+    if (/^[=+\-@]/.test(s)) s = `'${s}`;
+    return /[",\r\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return rows.map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+}
+
+/**
  * Parse an input CSV into [{ line, businessId, name }].
  * `line` is the 1-based line number in the original file so errors can be traced back.
  */
