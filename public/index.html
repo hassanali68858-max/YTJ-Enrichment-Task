@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YTJ Enrichment</title>
+<style>
+  :root { --bg:#f7f7f5; --fg:#1d1d1b; --muted:#6b6b66; --card:#fff; --line:#e3e3df;
+          --ok:#1f7a4d; --warn:#9a6700; --err:#b42318; --accent:#2457c5; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:1200px; margin:0 auto; padding:24px 16px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p.lead { color:var(--muted); margin:0 0 20px; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:16px; }
+  textarea { width:100%; min-height:140px; font:12px/1.4 ui-monospace, Menlo, monospace; border:1px solid var(--line); border-radius:6px; padding:8px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:8px 14px; font-weight:600; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--accent); border:1px solid var(--line); }
+  button:disabled { opacity:.5; cursor:wait; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:4px 10px; background:var(--card); cursor:pointer; }
+  .chip.active { border-color:var(--fg); }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-size:12px; color:var(--muted); font-weight:600; }
+  .status { font-weight:600; white-space:nowrap; }
+  .s-ok { color:var(--ok); } .s-ambiguous, .s-warn { color:var(--warn); } .s-not_found, .s-invalid_input, .s-error { color:var(--err); }
+  .muted { color:var(--muted); font-size:12px; }
+  .warn { color:var(--warn); font-size:12px; display:block; }
+  pre { background:#f2f2ef; padding:8px; border-radius:6px; overflow:auto; max-height:320px; font-size:12px; }
+  details summary { cursor:pointer; color:var(--accent); }
+  .scroll { overflow-x:auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Business ID enrichment</h1>
+  <p class="lead">Paste or upload a CSV with business IDs and/or company names. Data comes from PRH's open YTJ API.</p>
+
+  <section class="panel">
+    <textarea id="csv" spellcheck="false">business_id,name
+0112038-9,Nokia Oyj
+,Valio Oy
+1234567-8,
+0100002-9,</textarea>
+    <div class="row">
+      <input type="file" id="file" accept=".csv,text/csv">
+      <select id="lang"><option value="en">English</option><option value="fi">Suomi</option><option value="sv">Svenska</option></select>
+      <button id="run">Enrich</button>
+      <button id="download" class="secondary" disabled>Download customers JSON</button>
+    </div>
+  </section>
+
+  <section class="panel" id="out" hidden>
+    <div class="chips" id="summary"></div>
+    <div class="scroll" style="margin-top:12px">
+      <table>
+        <thead><tr><th>Line</th><th>Input</th><th>Status</th><th>Company</th><th>Form / industry</th><th>Address</th><th>Customer record</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+let last = null, filter = 'all';
+
+$('file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (f) $('csv').value = await f.text();
+});
+
+$('run').addEventListener('click', async () => {
+  $('run').disabled = true; $('run').textContent = 'Working...';
+  try {
+    const res = await fetch('/api/enrich?lang=' + $('lang').value, {
+      method: 'POST', headers: { 'Content-Type': 'text/csv' }, body: $('csv').value,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    last = data; filter = 'all'; render();
+  } catch (err) {
+    $('out').hidden = false;
+    $('summary').innerHTML = '';
+    $('rows').innerHTML = `<tr><td colspan="7" class="s-error">${esc(err.message)}</td></tr>`;
+  } finally {
+    $('run').disabled = false; $('run').textContent = 'Enrich';
+  }
+});
+
+$('download').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(last.customers, null, 2)], { type: 'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'customers.json' });
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
+function render() {
+  $('out').hidden = false;
+  $('download').disabled = !last.customers.length;
+  const s = last.summary;
+  const keys = ['all', ...Object.keys(s).filter((k) => k !== 'total' && k !== 'duplicates')];
+  $('summary').innerHTML = keys.map((k) =>
+    `<span class="chip ${k === filter ? 'active' : ''}" data-k="${k}">${k === 'all' ? 'All' : k.replace('_', ' ')} · ${k === 'all' ? s.total : s[k]}</span>`
+  ).join('') + (s.duplicates ? `<span class="muted" style="align-self:center">${s.duplicates} duplicate(s)</span>` : '');
+  $('summary').querySelectorAll('.chip').forEach((c) => c.onclick = () => { filter = c.dataset.k; render(); });
+
+  $('rows').innerHTML = last.results.filter((r) => filter === 'all' || r.status === filter).map((r) => {
+    const c = r.company;
+    const a = c?.postalAddress || c?.streetAddress;
+    const cand = (r.candidates || []).map((x) => `${esc(x.name)} (${esc(x.businessId)}, ${esc(x.city || '-')})`).join('<br>');
+    return `<tr>
+      <td>${r.line}</td>
+      <td>${esc(r.input.businessId || '')}<br><span class="muted">${esc(r.input.name || '')}</span></td>
+      <td><span class="status s-${r.status}">${r.status.replace('_', ' ')}</span>
+          ${r.confidence ? `<br><span class="muted">${r.matchMethod} · ${r.confidence}</span>` : ''}</td>
+      <td>${c ? `<strong>${esc(c.name)}</strong><br>${esc(c.businessId)} · <span class="${c.status === 'active' ? 's-ok' : 's-warn'}">${esc(c.status)}</span>`
+              : `<span class="s-error">${esc(r.error)}</span>${cand ? `<br><span class="muted">Candidates:<br>${cand}</span>` : ''}`}
+          ${r.warnings.map((w) => `<span class="warn">⚠ ${esc(w)}</span>`).join('')}</td>
+      <td>${c ? `${esc(c.companyForm?.description)}<br><span class="muted">${esc(c.mainIndustry?.code)} ${esc(c.mainIndustry?.description)}</span>` : ''}</td>
+      <td>${a ? `${esc(a.street)}<br>${esc(a.postCode)} ${esc(a.city)}` : ''}</td>
+      <td>${r.customer ? `<details><summary>View</summary><pre>${esc(JSON.stringify(r.customer, null, 2))}</pre></details>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+</script>
+</body>
+</html>

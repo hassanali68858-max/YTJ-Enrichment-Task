@@ -1,0 +1,1190 @@
+{
+  "totalResults": 8,
+  "companies": [
+    {
+      "businessId": {
+        "value": "0112038-9",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.0112038-9",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Nokia Oyj",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "70100",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Pääkonttorien toiminta"
+          },
+          {
+            "languageCode": "2",
+            "description": "Pääkonttorien toiminta"
+          },
+          {
+            "languageCode": "3",
+            "description": "Activities of head offices"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "website": {
+        "url": "www.nokia.com",
+        "registrationDate": "2020-01-01",
+        "source": "0"
+      },
+      "companyForms": [
+        {
+          "type": "17",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Julkinen osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Publikt aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Public limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Karakaari",
+          "buildingNumber": "7",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "02610",
+          "postOffices": [
+            {
+              "city": "ESPOO",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "ESBO",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        },
+        {
+          "type": 2,
+          "street": "",
+          "buildingNumber": "",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00045",
+          "postOffices": [
+            {
+              "city": "NOKIA GROUP",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "NOKIA GROUP",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0",
+          "postOfficeBox": "226"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "1927400-1",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.1927400-1",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "KONE Oyj",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "28220",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Nosto- ja siirtolaitteiden valmistus"
+          },
+          {
+            "languageCode": "2",
+            "description": "Nosto- ja siirtolaitteiden valmistus"
+          },
+          {
+            "languageCode": "3",
+            "description": "Manufacture of lifting and handling equipment"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "website": {
+        "url": "www.kone.com",
+        "registrationDate": "2020-01-01",
+        "source": "0"
+      },
+      "companyForms": [
+        {
+          "type": "17",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Julkinen osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Publikt aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Public limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Kartanontie",
+          "buildingNumber": "1",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00330",
+          "postOffices": [
+            {
+              "city": "HELSINKI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "HELSINGFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        },
+        {
+          "type": 2,
+          "street": "Kartanontie",
+          "buildingNumber": "1",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00330",
+          "postOffices": [
+            {
+              "city": "HELSINKI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "HELSINGFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "0116297-6",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.0116297-6",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Valio Oy",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "10510",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Maitotaloustuotteiden valmistus"
+          },
+          {
+            "languageCode": "2",
+            "description": "Maitotaloustuotteiden valmistus"
+          },
+          {
+            "languageCode": "3",
+            "description": "Operation of dairies and cheese making"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "website": {
+        "url": "valio.fi",
+        "registrationDate": "2020-01-01",
+        "source": "0"
+      },
+      "companyForms": [
+        {
+          "type": "16",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Meijeritie",
+          "buildingNumber": "6",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00370",
+          "postOffices": [
+            {
+              "city": "HELSINKI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "HELSINGFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        },
+        {
+          "type": 2,
+          "street": "",
+          "buildingNumber": "",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00039",
+          "postOffices": [
+            {
+              "city": "VALIO",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "VALIO",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0",
+          "postOfficeBox": "10"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "0100130-4",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.0100130-4",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Dynava Oy",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        },
+        {
+          "name": "Oy Eniro Finland Ab",
+          "type": "1",
+          "registrationDate": "1990-01-01",
+          "endDate": "2009-12-31",
+          "version": 2,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "82200",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Puhelinpalvelukeskusten toiminta"
+          },
+          {
+            "languageCode": "2",
+            "description": "Puhelinpalvelukeskusten toiminta"
+          },
+          {
+            "languageCode": "3",
+            "description": "Activities of call centres"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "website": {
+        "url": "www.dynava.fi",
+        "registrationDate": "2020-01-01",
+        "source": "0"
+      },
+      "companyForms": [
+        {
+          "type": "16",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Valimotie",
+          "buildingNumber": "17-19",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00380",
+          "postOffices": [
+            {
+              "city": "HELSINKI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "HELSINGFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        },
+        {
+          "type": 2,
+          "street": "Valimotie",
+          "buildingNumber": "17-19",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "00380",
+          "postOffices": [
+            {
+              "city": "HELSINKI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "HELSINGFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "0100002-9",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.0100002-9",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Artjärven Metalli Oy",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1",
+          "endDate": "2005-12-19"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "28130",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Muiden pumppujen ja kompressorien valmistus"
+          },
+          {
+            "languageCode": "2",
+            "description": "Muiden pumppujen ja kompressorien valmistus"
+          },
+          {
+            "languageCode": "3",
+            "description": "Manufacture of other pumps and compressors"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "companyForms": [
+        {
+          "type": "16",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1",
+          "endDate": "2005-12-19"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2",
+          "endDate": "2005-12-19"
+        }
+      ],
+      "addresses": [],
+      "tradeRegisterStatus": "4",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "endDate": "2005-12-19",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "2345678-0",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.2345678-0",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Autotalo Virtanen Oy",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "45110",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Henkilöautojen ja kevyiden moottoriajoneuvojen kauppa"
+          },
+          {
+            "languageCode": "2",
+            "description": "Henkilöautojen ja kevyiden moottoriajoneuvojen kauppa"
+          },
+          {
+            "languageCode": "3",
+            "description": "Sale of cars and light motor vehicles"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "companyForms": [
+        {
+          "type": "16",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Hämeenkatu",
+          "buildingNumber": "10",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "33100",
+          "postOffices": [
+            {
+              "city": "TAMPERE",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "TAMMERFORS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "2456789-6",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.2456789-6",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Autotalo Virtanen Ky",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "45200",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Moottoriajoneuvojen huolto ja korjaus"
+          },
+          {
+            "languageCode": "2",
+            "description": "Moottoriajoneuvojen huolto ja korjaus"
+          },
+          {
+            "languageCode": "3",
+            "description": "Maintenance and repair of motor vehicles"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "companyForms": [
+        {
+          "type": "13",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Kommandiittiyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Kommanditbolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited partnership"
+            }
+          ],
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 1,
+          "street": "Kauppakatu",
+          "buildingNumber": "3",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "40100",
+          "postOffices": [
+            {
+              "city": "JYVÄSKYLÄ",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "JYVÄSKYLÄ",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    },
+    {
+      "businessId": {
+        "value": "3012345-8",
+        "registrationDate": "1990-01-01",
+        "source": "3"
+      },
+      "euId": {
+        "value": "FIFPRO.3012345-8",
+        "source": "1"
+      },
+      "names": [
+        {
+          "name": "Pikakuljetus Lahtinen Oy",
+          "type": "1",
+          "registrationDate": "2010-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "mainBusinessLine": {
+        "type": "49410",
+        "descriptions": [
+          {
+            "languageCode": "1",
+            "description": "Tieliikenteen tavarankuljetus"
+          },
+          {
+            "languageCode": "2",
+            "description": "Tieliikenteen tavarankuljetus"
+          },
+          {
+            "languageCode": "3",
+            "description": "Freight transport by road"
+          }
+        ],
+        "typeCodeSet": "TOIMI4",
+        "registrationDate": "2008-01-01",
+        "source": "2"
+      },
+      "companyForms": [
+        {
+          "type": "16",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Osakeyhtiö"
+            },
+            {
+              "languageCode": "2",
+              "description": "Aktiebolag"
+            },
+            {
+              "languageCode": "3",
+              "description": "Limited company"
+            }
+          ],
+          "registrationDate": "2000-01-01",
+          "version": 1,
+          "source": "1"
+        }
+      ],
+      "companySituations": [
+        {
+          "type": "KONK",
+          "registrationDate": "2026-05-01",
+          "source": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Konkurssissa"
+            },
+            {
+              "languageCode": "2",
+              "description": "I konkurs"
+            },
+            {
+              "languageCode": "3",
+              "description": "Bankruptcy"
+            }
+          ]
+        }
+      ],
+      "registeredEntries": [
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Rekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "Registrerad"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered"
+            }
+          ],
+          "registrationDate": "1980-01-01",
+          "register": "1",
+          "authority": "2"
+        },
+        {
+          "type": "1",
+          "descriptions": [
+            {
+              "languageCode": "1",
+              "description": "Arvonlisäverorekisterissä"
+            },
+            {
+              "languageCode": "2",
+              "description": "I mervärdesskatteregistret"
+            },
+            {
+              "languageCode": "3",
+              "description": "Registered in VAT register"
+            }
+          ],
+          "registrationDate": "1994-06-01",
+          "register": "6",
+          "authority": "1"
+        }
+      ],
+      "addresses": [
+        {
+          "type": 2,
+          "street": "Teollisuustie",
+          "buildingNumber": "22",
+          "entrance": "",
+          "apartmentNumber": "",
+          "apartmentIdSuffix": "",
+          "co": "",
+          "postCode": "15100",
+          "postOffices": [
+            {
+              "city": "LAHTI",
+              "languageCode": "1",
+              "municipalityCode": "091"
+            },
+            {
+              "city": "LAHTIS",
+              "languageCode": "2",
+              "municipalityCode": "091"
+            }
+          ],
+          "registrationDate": "2020-01-01",
+          "source": "0"
+        }
+      ],
+      "tradeRegisterStatus": "1",
+      "status": "2",
+      "registrationDate": "1980-01-01",
+      "lastModified": "2026-10-01T10:00:00"
+    }
+  ]
+}

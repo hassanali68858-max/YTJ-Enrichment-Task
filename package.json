@@ -1,0 +1,17 @@
+{
+  "name": "ytj-enrichment",
+  "version": "1.0.0",
+  "description": "Enrich CSV lists of Finnish companies with data from PRH's open YTJ API and map them to customer-register records.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "start:mock": "YTJ_MOCK=1 node src/server.js",
+    "enrich": "node src/cli.js",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

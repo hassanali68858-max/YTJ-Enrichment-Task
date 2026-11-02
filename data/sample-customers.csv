@@ -1,0 +1,32 @@
+y-tunnus;company_name;note
+0112038-9;Nokia Oyj;clean row: ID + name
+1927400-1;Kone;ID + short name
+0116297-6;;ID only
+1852302-9;Neste Oyj;
+1463611-4;Fortum;
+0114162-2;Stockmann Oyj Abp;
+0109862-8;Kesko Oyj;
+0116510-6;Elisa Oyj;
+1475607-9;Telia Finland Oyj;
+0214036-5;Fiskars Oyj Abp;
+0100045 9;;ID with space instead of dash
+100004-5;;leading zero lost in Excel
+FI01000360;;VAT-number form
+0100130-4;Eniro Finland;old name in CSV -> name mismatch warning
+0100002-9;Artjärven Metalli Oy;ceased company
+0100048-3;;ceased co-operative bank
+0112038-8;Nokia Oyj;bad check digit but name present -> falls back to name search
+1234567-8;;bad check digit and no name -> invalid_input
+12345;;too short -> invalid_input
+;Valio Oy;name only (exact)
+;Kesko;name only (core name)
+;"Marimekko Oyj";quoted name only
+;Autotalo Virtanen;fictitious name -> not found live / ambiguous in mock
+;Autotalo Virtanen Oy;fictitious name -> exact match in mock
+;Pikakuljetus Lahtinen Oy;fictitious -> bankruptcy in mock
+;Olematon Yritys Xyz Oy;does not exist -> not_found
+;Nokia;duplicate of line 2 once resolved (and many name hits)
+0112038-9;Nokia Oyj;exact duplicate row
+1041090-0;;ID only, whatever it resolves to
+0195681-3;;ID only, whatever it resolves to
+;;fully blank -> skipped
