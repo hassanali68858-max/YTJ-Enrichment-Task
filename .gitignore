@@ -4,3 +4,4 @@ result.json
 customers*.json
 customers*.csv
 .DS_Store
+.env

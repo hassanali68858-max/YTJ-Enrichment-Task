@@ -20,9 +20,7 @@ The CLI exits with code 2 if any row needs attention, so it's usable in a script
 
 ### API
 
-| | | |
-|---|---|---|
-| `POST /api/enrich` | body: CSV, or JSON `{ "csv": "..." }` | `?lang=en\|fi\|sv`, `?format=json\|netsuite-csv` |
+| `POST /api/enrich` | body: CSV, or JSON `{ "csv": "..." }` | `?lang=en\|fi\|sv`, `?format=json\|netsuite-csv`
 | `GET /api/companies/:businessId` | single normalised company | handy for debugging |
 | `GET /healthz` | liveness + upstream stats (requests, retries, cache hits) | |
 | `GET /` | small UI: paste or upload, filter by status, download | |
@@ -121,21 +119,6 @@ I used NetSuite's Customer record because NetSuite was the example in the brief,
 - **CSV Import Assistant**, which needs no code: `?format=netsuite-csv` gives one row per customer. Map the columns once, save the import map, and use "Add or Update" on External ID.
 - **REST API**: the JSON `customers` array is already in the record API's shape, so an adapter only needs auth and an upsert.
 
-| Field | From | Why |
-|---|---|---|
-| `externalId` = `FI-<businessId>` | business ID | Natural key → idempotent upserts. Re-running an import updates records instead of duplicating them. The prefix leaves room for foreign companies. |
-| `isPerson: false` | – | Corporate customers. |
-| `companyName` | current primary name | The registered name, not what was typed in the CSV. |
-| `vatRegNumber` | `FI` + digits, only if VAT liable | Needed on B2B invoices. |
-| `isInactive` | status ≠ active | Stops anyone selling on credit to a bankrupt company by accident. |
-| `url` | website, `https://` added | |
-| `addressBook` | postal → billing, street → shipping | One entry if they're the same. |
-| `custentity_business_id` | business ID | Separate searchable field. Finance searches by Y-tunnus. |
-| `custentity_company_form` | YRMU abbreviation (OY, OYJ, KY, OK…) | Short, official, fits a list column. |
-| `custentity_industry_code` / `_name` | main business line (TOL 2008) | Segmentation, e.g. finding fleet or leasing customers. |
-| `custentity_register_status` | derived status | More precise than a boolean: ceased ≠ bankrupt. |
-| `custentity_enrichment` | source, PRH `lastModified`, fetch time, method, confidence, warnings | Provenance: anyone looking at the record can see where the data came from and how much to trust it. A re-sync can also skip companies that haven't changed. |
-
 **Deliberately not mapped:** subsidiary, sales rep, payment terms, price level and currency. PRH doesn't know them. They're business decisions, so they belong in the import configuration.
 
 ## Production readiness: what's there and what isn't
@@ -164,12 +147,10 @@ What's missing, roughly in the order I'd add it:
 
 ## How I used AI
 
-<!-- Awais: edit this so it matches exactly what you did, then delete this line. -->
-
-I used Claude (Anthropic) extensively:
+I used Claude (Anthropic):
 
 - to work out the YTJ v3 response format and to query the live API and its code lists (that's where the VAT register, name type and company form findings come from)
-- to write most of the code, tests, fixtures and UI. I then ran it against the live API and compared the results with the YTJ website. When the first live run showed refused connections, that led to the pacing and retry changes.
+- to write tests & fixtures. I then ran it against the live API and compared the results with the YTJ website. When the first live run showed refused connections, that led to the pacing and retry changes.
 - as a sparring partner on the design: when a name match is safe, how to treat inactive companies and VAT numbers, where duplicates should be detected, and how to structure the code so the PRH-specific parts are isolated
 - to draft this README, which I then edited
 
